@@ -38,35 +38,45 @@
 
 
   function initActions(){
-    const bookContainer = document.querySelectorAll(select.containerOf.book);
+    //const bookContainer = document.querySelectorAll(select.containerOf.book);
     //console.log('bookContainer[elem]: ', bookContainer[elem]);
+    const booksContainer = document.querySelector(select.containerOf.books);
 
-    for(const elem of bookContainer){
-      const a1 = elem.getAttribute('data-id');
+    //console.log('booksContainer ', booksContainer)
 
-      //console.log('elem: ', elem);
-      //console.log('a1: ', a1);
+    booksContainer.addEventListener('click', function(e){
+      e.preventDefault();
+    });
 
-      elem.addEventListener('dblclick', function(){
-        event.preventDefault();
-
-        if(favouriteBooks.includes(a1)){
-          const index = favouriteBooks.indexOf(a1);
+    booksContainer.addEventListener('dblclick', function(e){
+      e.preventDefault();
+      //console.log('event.target: ', event.target);
+      //console.log('e.target: ', e.target);
+      //console.log('e.target.offsetParent: ', e.target.offsetParent);
+      const parent = e.target.offsetParent;
+      //console.log('parent.classList: ', parent.classList);
+      if (parent.classList.contains('book__image')){
+        //console.log('passed');
+        const dataId = parent.getAttribute('data-id');
+        if(favouriteBooks.includes(dataId)){
+          const index = favouriteBooks.indexOf(dataId);
           favouriteBooks.splice(index, 1);
-          elem.classList.remove('favorite');
+          parent.classList.remove('favorite');
         }
-        else{
-          favouriteBooks.push(a1);
-          elem.classList.add('favorite');
+        else {
+          favouriteBooks.push(dataId);
+          parent.classList.add('favorite');
         }
 
 
-        console.log('dblclick!');
-        //console.log('data-id: ', a1);
-        console.log('favouriteBooks: ', favouriteBooks);
-      });
-    }
+      }
 
+      console.log('favouriteBooks: ', favouriteBooks);
+
+
+
+
+    });
 
 
   }
