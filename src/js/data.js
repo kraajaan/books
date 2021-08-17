@@ -19,7 +19,7 @@ dataSource.books = [
     rating: 9.2,
     image: 'images/books/2.jpg',
     details: {
-      adults: false,
+      adults: true,
       nonFiction: true
     }
   },
