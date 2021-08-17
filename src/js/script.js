@@ -14,6 +14,15 @@
     },
   };
 
+  const settings = {
+    rating: {
+      A: 'linear-gradient(to bottom,  #fefcea 0%, #f1da36 100%)',
+      B: 'linear-gradient(to bottom, #b4df5b 0%,#b4df5b 100%)',
+      C: 'linear-gradient(to bottom, #299a0b 0%, #299a0b 100%)',
+      D: 'linear-gradient(to bottom, #ff0084 0%,#ff0084 100%)',
+    },
+  };
+
   const templates = {// eslint-disable-line no-unused-vars
     menuProduct: Handlebars.compile(document.querySelector(select.templateOf.book).innerHTML),
   };
@@ -28,11 +37,32 @@
 
   function renderBooks(books){
     //console.log('books: ', books);
+    let i = 0;
     for(const elem of books){
+      i++;
       const genHTML = templates.menuProduct(elem);
       const genDOM = utils.createDOMFromHTML(genHTML);
       const booksContainer = document.querySelector(select.containerOf.books);
       booksContainer.appendChild(genDOM);
+
+      const divR = document.querySelector('[rating-id=\"' + i +'\"]');
+      const rating = elem.rating;
+      const divWidth = rating * 10;
+      console.log('divR: ', settings.rating.two);
+      //divR.style.backgroundColor = 'red';
+      if(rating<=6){
+        divR.style.background = settings.rating.A;
+      }
+      else if(rating>6 && rating<=8){
+        divR.style.background = settings.rating.B;
+      }
+      else if(rating>8 && rating<=9){
+        divR.style.background = settings.rating.C;
+      }
+      else {
+        divR.style.background = settings.rating.D;
+      }
+      divR.style.width = divWidth+'%';
 
     }
   }
