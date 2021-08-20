@@ -2,6 +2,35 @@
 
 {
   'use strict';
+
+  class BooksList {
+    constructor() {
+      
+    }
+
+    initData() {
+
+    }
+
+    getElements() {
+
+    }
+
+    initActions() {
+
+    }
+
+    filterBooks() {
+
+    }
+
+    determineRatingBgnd() {
+
+    }
+  }
+
+  const app = new BooksList();
+
   const select = {
     templateOf: {
       book: '#template-book',
