@@ -73,21 +73,12 @@
         const divR = document.querySelector('[rating-id="' + i +'"]');
         const rating = elem.rating;
         const divWidth = rating * 10;
-        console.log('divR: ', settings.rating.two);
+        console.log('rating: ', rating);
         //divR.style.backgroundColor = 'red';
-        if(rating<=6){
-          divR.style.background = settings.rating.A;
-        }
-        else if(rating>6 && rating<=8){
-          divR.style.background = settings.rating.B;
-        }
-        else if(rating>8 && rating<=9){
-          divR.style.background = settings.rating.C;
-        }
-        else {
-          divR.style.background = settings.rating.D;
-        }
+        divR.style.background = thisApp.determineRatingBgnd(rating);
         divR.style.width = divWidth+'%';
+
+
 
       }
     }
@@ -226,7 +217,19 @@
 
     }
 
-    determineRatingBgnd() {
+    determineRatingBgnd(rating) {
+      if(rating<=6){
+        return settings.rating.A;
+      }
+      else if(rating>6 && rating<=8){
+        return settings.rating.B;
+      }
+      else if(rating>8 && rating<=9){
+        return settings.rating.C;
+      }
+      else {
+        return settings.rating.D;
+      }
 
     }
   }
