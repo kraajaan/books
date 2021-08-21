@@ -3,34 +3,6 @@
 {
   'use strict';
 
-  class BooksList {
-    constructor() {
-      
-    }
-
-    initData() {
-
-    }
-
-    getElements() {
-
-    }
-
-    initActions() {
-
-    }
-
-    filterBooks() {
-
-    }
-
-    determineRatingBgnd() {
-
-    }
-  }
-
-  const app = new BooksList();
-
   const select = {
     templateOf: {
       book: '#template-book',
@@ -56,14 +28,223 @@
     menuProduct: Handlebars.compile(document.querySelector(select.templateOf.book).innerHTML),
   };
 
-  const bookDB = dataSource.books;
-  const favouriteBooks = [],
-    filters = [];
+  class BooksList {
+    constructor() {
+      const thisApp = this;
+
+      thisApp.favouriteBooks = [];
+      thisApp.filters = [];
+
+      console.log('thisApp4: ', thisApp);
+      thisApp.initData();
+      thisApp.getElements();
+      thisApp.renderBooks(thisApp.data);
+      thisApp.initActions();
+      //console.log('thisApp.favouriteBooks: ', thisApp.favouriteBooks);
+    }
+
+    initData() {
+      const thisApp = this;
+
+      thisApp.data = dataSource.books;
+      thisApp.getElements();
+
+    }
+
+    getElements() {
+      const thisApp = this;
+
+      thisApp.dom = {};
+      thisApp.dom.booksContainer = document.querySelector(select.containerOf.books);
+
+    }
+
+    renderBooks(books) {
+      const thisApp = this;
+
+      let i = 0;
+      for(const elem of books){
+        i++;
+        const genHTML = templates.menuProduct(elem);
+        const genDOM = utils.createDOMFromHTML(genHTML);
+        //1const booksContainer = document.querySelector(select.containerOf.books);
+        thisApp.dom.booksContainer.appendChild(genDOM);//1
+
+        const divR = document.querySelector('[rating-id="' + i +'"]');
+        const rating = elem.rating;
+        const divWidth = rating * 10;
+        console.log('divR: ', settings.rating.two);
+        //divR.style.backgroundColor = 'red';
+        if(rating<=6){
+          divR.style.background = settings.rating.A;
+        }
+        else if(rating>6 && rating<=8){
+          divR.style.background = settings.rating.B;
+        }
+        else if(rating>8 && rating<=9){
+          divR.style.background = settings.rating.C;
+        }
+        else {
+          divR.style.background = settings.rating.D;
+        }
+        divR.style.width = divWidth+'%';
+
+      }
+    }
+
+    initActions() {
+      const thisApp = this;
+
+      const booksContainer = document.querySelector(select.containerOf.books);
+      console.log('test19: ');
+
+      booksContainer.addEventListener('click', function(e){
+        e.preventDefault();
+      });
+
+      booksContainer.addEventListener('dblclick', function(e){
+        e.preventDefault();
+        const parent = e.target.offsetParent;
 
 
-  renderBooks(bookDB);
-  initActions();
+        if (parent.classList.contains('book__image')){
 
+          const dataId = parent.getAttribute('data-id');
+
+          if(thisApp.favouriteBooks.includes(dataId)){
+            const index = thisApp.favouriteBooks.indexOf(dataId);
+            thisApp.favouriteBooks.splice(index, 1);
+            parent.classList.remove('favorite');
+            console.log('test08: ');
+          }
+          else {
+            console.log('test07: ');
+            thisApp.favouriteBooks.push(dataId);
+            parent.classList.add('favorite');
+          }
+          console.log('thisApp.favouriteBooks: ', thisApp.favouriteBooks);
+
+        }
+
+
+      });
+
+      const formContainer = document.querySelector(select.containerOf.form);
+
+      //console.log('booksContainer ', booksContainer)
+
+      formContainer.addEventListener('click', function(e){
+        const elem = e.target;
+
+        if(elem.tagName == 'INPUT' && elem.type == 'checkbox' && elem.name == 'filter'){
+
+          if(elem.checked == true && !thisApp.filters.includes(elem.value)){
+            thisApp.filters.push(elem.value);
+          }
+          else if(elem.checked == false && thisApp.filters.includes(elem.value)){
+            thisApp.filters.splice(thisApp.filters.indexOf(elem.value), 1);
+          }
+          //console.log('filters: ', filters);
+          thisApp.chkFilters();
+
+        }
+
+
+      });
+
+    }
+
+    chkFilters() {
+      const thisApp = this;
+
+      const arr = [];
+
+      for(let j in dataSource.books){
+        arr.push(parseInt(j)+1);
+      }
+      const arrLength = arr.length;
+
+
+
+      for(let i in dataSource.books){
+        //console.log('book: ', dataSource.books[i].details.nonFiction);
+        const nf = dataSource.books[i].details.nonFiction;
+        const ad = dataSource.books[i].details.adults;
+        const bookId = dataSource.books[i].id;
+        const index = arr.indexOf(bookId);
+
+
+
+        let filtAd = false,
+          filtNf = false;
+
+        if(thisApp.filters.includes('adults')){
+          filtAd = true;
+        }
+
+        if(thisApp.filters.includes('nonFiction')){
+          filtNf = true;
+        }
+
+        //console.log('filtAd, filtNf: ', filtAd, filtNf);
+
+        if(filtAd == true && filtNf == true){
+          if(ad == filtAd && nf == filtNf){
+            arr.splice(index, 1);
+          }
+        }
+        else if(filtAd == true && filtNf == false){
+          if(ad){
+            arr.splice(index, 1);
+          }
+        }
+        else if(filtAd == false && filtNf == true){
+          if(nf){
+            arr.splice(index, 1);
+          }
+        }
+        else{
+          //console.log('none!');
+          arr.splice(index, 1);
+        }
+
+
+      }
+
+      for(let k=1; k<=arrLength; k++){
+
+        const bookDom = document.querySelector('[data-id="' + k +'"]');
+
+        if(arr.includes(k)){
+          bookDom.classList.add('hidden');
+        }
+        else {
+          bookDom.classList.remove('hidden');
+        }
+
+      }
+
+    }
+
+    determineRatingBgnd() {
+
+    }
+  }
+
+  const app = new BooksList();
+  app;
+
+
+
+  //const bookDB = dataSource.books;
+  //const favouriteBooks = [],
+  //  filters = [];
+
+
+  //renderBooks(bookDB);
+  //initActions();
+
+  /*
   function renderBooks(books){
     //console.log('books: ', books);
     let i = 0;
@@ -71,10 +252,10 @@
       i++;
       const genHTML = templates.menuProduct(elem);
       const genDOM = utils.createDOMFromHTML(genHTML);
-      const booksContainer = document.querySelector(select.containerOf.books);
-      booksContainer.appendChild(genDOM);
+      //1const booksContainer = document.querySelector(select.containerOf.books);
+      thisApp.dom.booksContainer.appendChild(genDOM);//1
 
-      const divR = document.querySelector('[rating-id=\"' + i +'\"]');
+      const divR = document.querySelector('[rating-id="' + i +'"]');
       const rating = elem.rating;
       const divWidth = rating * 10;
       console.log('divR: ', settings.rating.two);
@@ -95,8 +276,9 @@
 
     }
   }
+  */
 
-
+  /*
   function initActions(){
     const booksContainer = document.querySelector(select.containerOf.books);
 
@@ -153,20 +335,21 @@
 
 
   }
+  */
 
-
+  /*
   function chkFilters(){
     //console.log('test');
     const arr = [];
 
-    for(j in dataSource.books){
+    for(let j in dataSource.books){
       arr.push(parseInt(j)+1);
     }
     const arrLength = arr.length;
 
 
 
-    for(i in dataSource.books){
+    for(let i in dataSource.books){
       //console.log('book: ', dataSource.books[i].details.nonFiction);
       const nf = dataSource.books[i].details.nonFiction;
       const ad = dataSource.books[i].details.adults;
@@ -211,9 +394,9 @@
 
     }
 
-    for(k=1; k<=arrLength; k++){
+    for(let k=1; k<=arrLength; k++){
 
-      const bookDom = document.querySelector('[data-id=\"' + k +'\"]');
+      const bookDom = document.querySelector('[data-id="' + k +'"]');
 
       if(arr.includes(k)){
         bookDom.classList.add('hidden');
@@ -226,6 +409,7 @@
 
 
   }
+  */
 
 
 }
